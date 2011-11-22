@@ -7,11 +7,11 @@
 
  set_time_limit(0); 
  
- $id 	 = '#####';					//ID поста
- $ip     = $_SERVER['REMOTE_ADDR']; 
- //$date = date("F j, Y");
- //$time = date("g:i a");
+ $date   = date("F j, Y");
+ $time   = date("g:i a");
+ $id 	 = '#####';					//ID поста 
  $icqnum = '######';				//ICQ номер, на который хотим получать уведомления
+ $ip     = $_SERVER['REMOTE_ADDR'];    
  
  if(isset($_SERVER['HTTP_REFERER']))
  {
@@ -27,6 +27,7 @@
 		}		
  	}else exit();
  }
+
  if(file_exists('blog.txt')){
  	$file = ('result.txt');
  	$fp2  = fopen('blog.txt','r');
@@ -42,6 +43,7 @@
  	}
  	fclose($fp2);
  }
+ 
  if(file_exists('result.txt'))
  {
 	include('WebIcqLite.class.php');
