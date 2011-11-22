@@ -1,0 +1,8 @@
+IKnowWhoUR: Namba Comment Sender v0.1 beta (Плюшка для Намба Блогов)
+
+Howto:
+0. Открываем comment.php, в переменную $icq вписываем свой номер аськи
+1. Переименовать comment.php в comment.gif
+2. Выложить comment.gif, .htaccess и gif.gif на веб сервер
+3. В блог, из которого нужно получать комменты, вставить картинку указав ее url:(http://myhost.ltd/comment.gif)
+4. Все, пользуемся.

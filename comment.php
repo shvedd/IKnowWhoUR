@@ -7,10 +7,11 @@
 
  set_time_limit(0); 
  
- $id 	 = '30931';
- $ip     = $_SERVER['REMOTE_ADDR'];
+ $id 	 = '30931';					//ID поста
+ $ip     = $_SERVER['REMOTE_ADDR']; //ноу коммент
  //$date = date("F j, Y");
  //$time = date("g:i a");
+ $icq    = '190739303';				//ICQ номер, на который хотим получать уведомления
  
  if(isset($_SERVER['HTTP_REFERER']))
  {
@@ -58,7 +59,7 @@
 	
 	if($icq->connect(UIN, PASSWORD))
 	{
-	   if(!$icq->send_message("190739303", "$comment"))
+	   if(!$icq->send_message("$icq", "$comment"))
 	   {
 	   	$icq->error();
 	   }
