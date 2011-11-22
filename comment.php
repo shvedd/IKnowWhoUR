@@ -11,7 +11,7 @@
  $ip     = $_SERVER['REMOTE_ADDR']; 
  //$date = date("F j, Y");
  //$time = date("g:i a");
- $icq    = '#########';				//ICQ номер, на который хотим получать уведомления
+ $icq    = '######';				//ICQ номер, на который хотим получать уведомления
  
  if(isset($_SERVER['HTTP_REFERER']))
  {
@@ -48,14 +48,15 @@
 	
 	$comment = "Господин, в вашем блоге #$blog_name# новый коммент.\r\n
 				IP комментатора: $ip\r\n
-				Никнейм: $name";								
+				Никнейм: $name\r\n
+				Коммент: $message";
 	$comment = iconv("UTF-8","cp1251",$comment);
- 	
+
 	define('UIN', '#########');		 //Бот uin  (регаем на icq.com)
-	define('PASSWORD', '#########'); //Бот пасс	 
-	
+	define('PASSWORD', '#########'); //Бот пасс
+
 	$icq = new WebIcqLite();
-	
+
 	if($icq->connect(UIN, PASSWORD))
 	{
 	   if(!$icq->send_message("$icq", "$comment"))
@@ -65,7 +66,7 @@
 	}
 	$icq->disconnect(); 	
  }
- 
+
  Header("Content-type: image/png"); 
  $im = ImageCreateFromGif('gif.gif');
  ImageGif($im);
