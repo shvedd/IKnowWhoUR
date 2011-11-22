@@ -11,7 +11,7 @@
  $ip     = $_SERVER['REMOTE_ADDR']; 
  //$date = date("F j, Y");
  //$time = date("g:i a");
- $icq    = '######';				//ICQ номер, на который хотим получать уведомления
+ $icqnum = '######';				//ICQ номер, на который хотим получать уведомления
  
  if(isset($_SERVER['HTTP_REFERER']))
  {
@@ -32,7 +32,7 @@
  	$fp2  = fopen('blog.txt','r');
  	while(!feof($fp2)){
  		$line = fgets($fp2);
-	 	if(preg_match('|<p>(.*)</p>|Uis', $line, $result))
+	 	if(preg_match('|<p>(.*)</p>|Uis', $line, $result)) //Составить регулярку нормальную
 	 	{
 	 		foreach($result as $match)
 	 		{
@@ -50,7 +50,7 @@
 				IP комментатора: $ip\r\n
 				Никнейм: $name\r\n
 				Коммент: $message";
-				
+
 	$comment = iconv("UTF-8","cp1251",$comment);
 
 	define('UIN', '#########');		 //Бот uin  (регаем на icq.com)
@@ -60,12 +60,12 @@
 
 	if($icq->connect(UIN, PASSWORD))
 	{
-	   if(!$icq->send_message("$icq", "$comment"))
+	   if(!$icq->send_message("$icqnum", "$comment"))
 	   {
 	   	$icq->error();
 	   }
+	   $icq->disconnect();
 	}
-	$icq->disconnect(); 	
  }
 
  Header("Content-type: image/png"); 
