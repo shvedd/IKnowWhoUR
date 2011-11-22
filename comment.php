@@ -50,6 +50,7 @@
 				IP комментатора: $ip\r\n
 				Никнейм: $name\r\n
 				Коммент: $message";
+				
 	$comment = iconv("UTF-8","cp1251",$comment);
 
 	define('UIN', '#########');		 //Бот uin  (регаем на icq.com)
