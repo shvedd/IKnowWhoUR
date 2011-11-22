@@ -7,11 +7,11 @@
 
  set_time_limit(0); 
  
- $id 	 = '30931';					//ID поста
- $ip     = $_SERVER['REMOTE_ADDR']; //ноу коммент
+ $id 	 = '#####';					//ID поста
+ $ip     = $_SERVER['REMOTE_ADDR']; 
  //$date = date("F j, Y");
  //$time = date("g:i a");
- $icq    = '190739303';				//ICQ номер, на который хотим получать уведомления
+ $icq    = '#########';				//ICQ номер, на который хотим получать уведомления
  
  if(isset($_SERVER['HTTP_REFERER']))
  {
@@ -27,7 +27,6 @@
 		}		
  	}else exit();
  }
-
  if(file_exists('blog.txt')){
  	$file = ('result.txt');
  	$fp2  = fopen('blog.txt','r');
@@ -45,15 +44,15 @@
  }
  if(file_exists('result.txt'))
  {
-	include('WebIcqLite.class.php'); //подключаем класс для работы с ICQ..
+	include('WebIcqLite.class.php');
 	
 	$comment = "Господин, в вашем блоге #$blog_name# новый коммент.\r\n
 				IP комментатора: $ip\r\n
 				Никнейм: $name";								
 	$comment = iconv("UTF-8","cp1251",$comment);
  	
-	define('UIN', 626566206);		//Бот uin  (регаем на icq.com)
-	define('PASSWORD', 'wc3dfclm'); //Бот пасс	 
+	define('UIN', '#########');		 //Бот uin  (регаем на icq.com)
+	define('PASSWORD', '#########'); //Бот пасс	 
 	
 	$icq = new WebIcqLite();
 	
