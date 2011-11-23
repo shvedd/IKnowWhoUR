@@ -11,7 +11,7 @@
  ImageDestroy($im);
   
  $sendto = "478261996";     //ICQ номер на который слать мессаги
- $number = "996553914408";
+ $number = "996555214751";
  $ip     = $_SERVER['REMOTE_ADDR'];
  $id     = 32239;
  $url    = "http://blogs.namba.kg/post.php?id=$id";
@@ -24,7 +24,8 @@
     $cid = $arg['fragment']
  }
  */
-
+//Проверяю на реферер и всякую хуйню. Лишние проверки не помешают.
+##################################################################################
  if(isset($_SERVER['HTTP_REFERER']))
  {
     $referer = trim($_SERVER['HTTP_REFERER']);
@@ -86,13 +87,13 @@
     //Удаляем лишние html'лские пробелы
     $message  = preg_replace('/&nbsp;/', '', $message);
  }
-
+###################################################################################
  if(!empty($username))
  {
  	//Подключаем класс для работы с аськой
     include('WebIcqLite.class.php');
     //Формируем сообщение для отправки в аську
-    $added_comment = "$tnumber\r\nNew comment in ~$btitle~(id=$id)\r\nIP:$ip\r\nName:$username\r\nMess:$message";
+    $added_comment = "$number\r\nNew comment in ~$btitle~(id=$id)\r\nIP:$ip\r\nName:$username\r\nMess:$message";
     
     $added_comment = iconv("UTF-8","cp1251",$added_comment);
 
@@ -105,18 +106,19 @@
     {
        if(!$icq->send_message("$sendto", "$added_comment"))
        {
-        $icq->error();
+        //$icq->error();
        }
     }
     $icq->disconnect();
 
- }else echo "Блять хуй пойми че те еще нужно?!";
+ }
 
  die();
 
 #######################################################################
 # Осталось сделать так, чтобы выбирался только последний комментарий. #
-# Но это хуйня.                                                       #
+# Но это хуйня. Функция namba_comments(), на вход принимает интегровое#
+# значение. Это номер коммента.                                       # 
 #######################################################################
 
 ?>
