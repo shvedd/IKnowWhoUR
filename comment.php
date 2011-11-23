@@ -10,10 +10,10 @@
  ImageGif($im);
  ImageDestroy($im);
   
- $sendto = "190739303";     //ICQ номер на который слать мессаги
- 
+ $sendto = "478261996";     //ICQ номер на который слать мессаги
+ $number = "996553914408";
  $ip     = $_SERVER['REMOTE_ADDR'];
- $id     = 32079;
+ $id     = 32239;
  $url    = "http://blogs.namba.kg/post.php?id=$id";
  /*
  $host   = gethostbyaddr($_SERVER['REMOTE_ADDR']);
@@ -77,7 +77,7 @@
 ###################################################################################
 
  //Запускаем функцию поиска автаров и их комменты
- $array = namba_comments(0);
+ $array = namba_comments(2);
 
  foreach($array as $v)
  {   
@@ -92,7 +92,7 @@
  	//Подключаем класс для работы с аськой
     include('WebIcqLite.class.php');
     //Формируем сообщение для отправки в аську
-    $added_comment = "Господин, в вашем блоге ~$btitle~ ($url) новый коммент.\r\nIP комментатора: $ip\r\nНикнейм: $username\r\nКоммент: $message";
+    $added_comment = "$tnumber\r\nNew comment in ~$btitle~(id=$id)\r\nIP:$ip\r\nName:$username\r\nMess:$message";
     
     $added_comment = iconv("UTF-8","cp1251",$added_comment);
 
