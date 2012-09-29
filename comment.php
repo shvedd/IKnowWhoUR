@@ -1,124 +1,112 @@
 <?php
-###################################################
-# IKnowWhoUR: Namba Comment Sender v0.1 beta      #
-# © 2011 by Mekan Shved Bayryew                   #
-# shved(at)xakep(dot)ru                           #
-###################################################
- 
- Header("Content-type: image/png"); 
- $im = ImageCreateFromGif('img/yeah.gif');
- ImageGif($im);
- ImageDestroy($im);
-  
- $sendto = "478261996";     //ICQ номер на который слать мессаги
- $number = "996555214751";
- $ip     = $_SERVER['REMOTE_ADDR'];
- $id     = 32239;
- $url    = "http://blogs.namba.kg/post.php?id=$id";
- /*
- $host   = gethostbyaddr($_SERVER['REMOTE_ADDR']);
- $url2   = "http://".$host.$_SERVER['REQUEST_URI'];
- $arg    = parse_url($url2,PHP_URL_FRAGMENT);
 
- if(!empty($arg['fragment'])){
-    $cid = $arg['fragment']
- }
- */
-//Проверяю на реферер и всякую хуйню. Лишние проверки не помешают.
-##################################################################################
- if(isset($_SERVER['HTTP_REFERER']))
- {
-    $referer = trim($_SERVER['HTTP_REFERER']);
-    
-    if($referer == "http://blogs.namba.kg/post.php?id=$id")
-    {
-        $fgc = file_get_contents("http://blogs.namba.kg/post.php?id=$id");
-        
-        if(file_exists('blog.txt'))
-        {
-            if(filesize($fgc) != filesize('blog.txt'))
-            {
-                file_put_contents('blog.txt',$fgc);
-            }else exit();
-        } else {
-            file_put_contents('blog.txt',$fgc);
+error_reporting(0);
+set_time_limit(120);
+
+######################################################
+# @"Checka" v0.1 beta                                #
+# @2011 by Mekan Shved Bayryew                       #
+# @izotvorec@namba.kg                                #
+######################################################
+ 
+Header("Content-type: image/png"); 
+$im = ImageCreateFromGif('img/yeah.gif');
+ImageGif($im);
+ImageDestroy($im);
+
+$uin   = "478261996";       //UIN
+$phone = "996555214751";    //Phone number, if you want to send comments directly to your phone
+
+$host = gethostbyaddr($_SERVER['REMOTE_ADDR']);
+$host = "http://".$host.$_SERVER['REQUEST_URI'];
+$arg  = parse_url($host, PHP_URL_FRAGMENT);
+
+if ( !empty($arg['fragment']) ) {
+    $bid = $arg['fragment']
+}
+
+if (isset($_SERVER['HTTP_REFERER'])) {
+    $ref = $_SERVER['HTTP_REFERER'];
+    if ($ref === "{$host}{$bid})" {
+        $content = get_page_content($ref);
+        if (preg_match("/<title>(.*)<\/title>/siU", $content, $m)) {
+            $title = $m[1];
+            $title = preg_replace('/\s\s/', '', $title);
         }
-        $blog = file_get_contents('blog.txt');
-    }else die();
- }else die();
- 
- //Узнаем title Блога 
- preg_match("/<title>(.*)<\/title>/siU",$blog, $matches);
- $btitle = $matches[1];
- $btitle = preg_replace('/\s\s/','',$btitle);
+        if (!file_exists('blog.txt')) {
+            file_put_contents('blog.txt', $content);
+        } elseif(filesize($content) !== filesize('blog.txt')) {
+            $commentData = get_comment_data($content);
+            send($commentData);
+        }
+    }
+}
 
-##################################################################################
- //Подключаем класс HTML_DOM_PARSER
- include_once('html_dom.php');
- //Клева жэ что есть такое счастье? ^_^
 
- function namba_comments($i)
- {
-    $source = file_get_html('blog.txt');
+function get_page_content($url)
+{
+    $ch = curl_init();
 
-    foreach($source->find('div.commentlist') as $comments)
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_HEADER, false);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($ch, CURLOPT_USERAGENT, 'PHP comment viewer bot')
+
+    $result = curl_exec($ch);
+
+    curl_close($ch);
+
+    return $result;
+}
+
+
+function get_comment_data($content)
+{
+    require_once 'html_dom.php';
+    
+    $content = file_get_html($content);
+    $parsed  = array();
+
+    foreach($content->find('div.commentlist') as $comments)
     {
        $count = count($comments);
-       $parsed['username'] = trim($comments->find('a.username', $i)->plaintext);
-       $parsed['comment']  = trim($comments->find('p', $i)->plaintext);       
-       
-       $array[] = $parsed;
+       $parsed['username'] = trim($comments->find('a.username', $content)->plaintext);
+       $parsed['comment']  = trim($comments->find('p', $content)->plaintext);       
     }
 
-    $source->clear();
-    unset($source);
-
-    return $array;
- }
-###################################################################################
-
- //Запускаем функцию поиска автаров и их комменты
- $array = namba_comments(2);
-
- foreach($array as $v)
- {   
-    $username = $v["username"];
-    $message  = $v["comment"];
-    //Удаляем лишние html'лские пробелы
-    $message  = preg_replace('/&nbsp;/', '', $message);
- }
-###################################################################################
- if(!empty($username))
- {
- 	//Подключаем класс для работы с аськой
-    include('WebIcqLite.class.php');
-    //Формируем сообщение для отправки в аську
-    $added_comment = "$number\r\nNew comment in ~$btitle~(id=$id)\r\nIP:$ip\r\nName:$username\r\nMess:$message";
+    $content->clear();
     
-    $added_comment = iconv("UTF-8","cp1251",$added_comment);
+    unset($content);
 
-    define('UIN', 626566206);       //Бот uin  (регаем на icq.com)
-    define('PASSWORD', 'password'); //Бот пасс
+    return $parsed;
+}
+
+
+function send($commentData)
+{
+    global $uin, $phone;
+
+    require_once 'WebIcqLite.class.php';
+
+    foreach ($commentData as $data) {
+        $user    = $data['username'];
+        $comment = $data['comment'];
+        $comment = preg_replace('/&nbsp;/', '', $comment);
+    }
+
+    $comment = "{$phone}\r\n'{$comment}' in '{$title}' by '{$user}'";
+    $comment = iconv("UTF-8", "cp1251", $comment);
+
+    define('UIN', 478261996);           //Бот uin
+    define('PASSWORD', 'password');     //Бот пасс
 
     $icq = new WebIcqLite();
-    
-    if($icq->connect(UIN, PASSWORD))
-    {
-       if(!$icq->send_message("$sendto", "$added_comment"))
-       {
-        //$icq->error();
-       }
+
+    if($icq->connect(UIN, PASSWORD)) {
+        $icq->send_message($uin, $comment);
     }
+
     $icq->disconnect();
+}
 
- }
-
- die();
-
-#######################################################################
-# Осталось сделать так, чтобы выбирался только последний комментарий. #
-# Но это хуйня. Функция namba_comments(), на вход принимает интегровое#
-# значение. Это номер коммента.                                       # 
-#######################################################################
-
-?>
+exit;
