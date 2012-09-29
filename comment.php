@@ -98,7 +98,7 @@
     $added_comment = iconv("UTF-8","cp1251",$added_comment);
 
     define('UIN', 626566206);       //Бот uin  (регаем на icq.com)
-    define('PASSWORD', 'wc3dfclm'); //Бот пасс
+    define('PASSWORD', 'password'); //Бот пасс
 
     $icq = new WebIcqLite();
     
