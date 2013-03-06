@@ -2,12 +2,6 @@
 
 error_reporting(0);
 set_time_limit(120);
-
-######################################################
-# @"Checka" v0.1 beta                                #
-# @2011 by Shved
-# @izotvorec@namba.kg                                #
-######################################################
  
 Header("Content-type: image/png"); 
 $im = ImageCreateFromGif('img/yeah.gif');
